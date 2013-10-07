@@ -1,4 +1,5 @@
 Forem::Engine.routes.draw do
+  filter :locale
   root :to => "forums#index"
 
   resources :forums, :only => [:index, :show] do
