@@ -36,6 +36,7 @@ module Forem
     after_save :approve_user,   :if => :approved?
     after_save :blacklist_user, :if => :spam?
     after_save :email_topic_subscribers, :if => Proc.new { |p| p.approved? && !p.notified? }
+    after_save :email_admins
 
     class << self
       def approved
@@ -102,6 +103,10 @@ module Forem
         subscription.send_notification(id) if subscription.subscriber != user
       end
       update_attribute(:notified, true)
+    end
+
+    def email_admins
+      AdminMailer.new_post(id).deliver
     end
 
     def set_topic_last_post_at
